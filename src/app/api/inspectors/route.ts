@@ -6,38 +6,44 @@ const EXTERNAL_API_BASE_URL = 'https://list-api-service.hellocabradar.workers.de
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const lat = searchParams.get('lat');
-    const lon = searchParams.get('lon');
+    const lat = searchParams.get('lat') || '51.5074';
+    const lon = searchParams.get('lon') || '-0.1276';
 
-    if (!lat || !lon) {
-      return NextResponse.json(
-        { error: 'Latitude and longitude are required' },
-        { status: 400 }
-      );
-    }
+    console.log(`Fetching inspectors from: ${EXTERNAL_API_BASE_URL}/list/inspectors?lat=${lat}&lon=${lon}`);
 
-    // Fetch from external API
     const response = await fetch(
       `${EXTERNAL_API_BASE_URL}/list/inspectors?lat=${lat}&lon=${lon}`,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'CabRadar/1.0',
         },
+        signal: AbortSignal.timeout(10000), // 10 second timeout
         next: { revalidate: 60 }, // Cache for 1 minute
       }
     );
 
+    console.log(`Inspectors API response status: ${response.status}`);
+
     if (!response.ok) {
-      throw new Error(`External API error: ${response.statusText}`);
+      console.error(`Inspectors API error: ${response.status} ${response.statusText}`);
+      return NextResponse.json({
+        type: 'FeatureCollection',
+        features: [],
+        error: `API returned ${response.status}: ${response.statusText}`
+      });
     }
 
     const data = await response.json();
+    console.log(`Inspectors API data received: ${data.features?.length || 0} inspectors`);
+
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching inspectors:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch inspectors data' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      type: 'FeatureCollection',
+      features: [],
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

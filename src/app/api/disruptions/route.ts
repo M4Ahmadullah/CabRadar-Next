@@ -11,25 +11,37 @@ export async function GET(request: NextRequest) {
     const width = searchParams.get('width') || '1000';
     const height = searchParams.get('height') || '1000';
 
+    console.log(`Fetching disruptions from: ${API_BASE_URL}/list/disruptions?lat=${lat}&lon=${lon}&width=${width}&height=${height}`);
+
     const response = await fetch(`${API_BASE_URL}/list/disruptions?lat=${lat}&lon=${lon}&width=${width}&height=${height}`, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'CabRadar/1.0',
       },
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
+    console.log(`Disruptions API response status: ${response.status}`);
+
     if (!response.ok) {
-      throw new Error(`Disruptions API error: ${response.status}`);
+      console.error(`Disruptions API error: ${response.status} ${response.statusText}`);
+      return NextResponse.json({
+        type: 'FeatureCollection',
+        features: [],
+        error: `API returned ${response.status}: ${response.statusText}`
+      });
     }
 
     const data = await response.json();
+    console.log(`Disruptions API data received: ${data.features?.length || 0} disruptions`);
 
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching disruptions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch disruptions data' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      type: 'FeatureCollection',
+      features: [],
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

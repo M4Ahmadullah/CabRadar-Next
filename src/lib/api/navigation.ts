@@ -22,9 +22,7 @@ export interface NavigationData {
 // Fetch available road disruptions for navigation
 export const getAvailableRoadDisruptions = async (limit: number = 5): Promise<NavigationItem[]> => {
   try {
-    console.log('Fetching road disruptions...');
     const data = await apiService.getRoads();
-    console.log('Road disruptions data received:', data);
     
     const disruptions: NavigationItem[] = [];
     
@@ -46,7 +44,6 @@ export const getAvailableRoadDisruptions = async (limit: number = 5): Promise<Na
       });
     });
     
-    console.log('Road disruptions processed:', disruptions.length);
     return disruptions;
   } catch (error) {
     console.error('Error fetching road disruptions:', error);
@@ -166,10 +163,7 @@ export const getAvailableTransportDisruptions = async (limit: number = 5): Promi
 
 // Fetch all navigation data
 export const getNavigationData = async (): Promise<NavigationData> => {
-  console.log('getNavigationData called');
-  
   try {
-    console.log('Starting to fetch all data...');
     
     const [roadDisruptions, inspectors, events, transportDisruptions] = await Promise.all([
       getAvailableRoadDisruptions(),
@@ -178,12 +172,6 @@ export const getNavigationData = async (): Promise<NavigationData> => {
       getAvailableTransportDisruptions()
     ]);
 
-    console.log('All data fetched:', {
-      roadDisruptions: roadDisruptions.length,
-      inspectors: inspectors.length,
-      events: events.length,
-      transportDisruptions: transportDisruptions.length
-    });
 
     return {
       roadDisruptions,

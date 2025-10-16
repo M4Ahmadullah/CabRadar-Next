@@ -16,20 +16,18 @@ export default function NavigationPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Starting to fetch navigation data...');
         setLoading(true);
         
         const data = await getNavigationData();
-        console.log('Navigation data received:', data);
         setNavigationData(data);
       } catch (error) {
         console.error('Error fetching navigation data:', error);
-        // Set empty data instead of crashing
+        // Set empty data instead of crashing - this prevents 404s
         setNavigationData({
           roadDisruptions: [],
           events: [],
           transportDisruptions: [],
-          inspectors: [] // Add back inspectors property
+          inspectors: []
         });
       } finally {
         setLoading(false);

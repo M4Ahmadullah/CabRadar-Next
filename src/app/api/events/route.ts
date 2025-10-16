@@ -11,25 +11,40 @@ export async function GET(request: NextRequest) {
     const width = searchParams.get('width') || '1000';
     const height = searchParams.get('height') || '1000';
 
+    console.log(`Fetching events from: ${API_BASE_URL}/list/events?lat=${lat}&lon=${lon}&width=${width}&height=${height}`);
+
     const response = await fetch(`${API_BASE_URL}/list/events?lat=${lat}&lon=${lon}&width=${width}&height=${height}`, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'CabRadar/1.0',
       },
+      // Add timeout to prevent hanging requests
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
+    console.log(`Events API response status: ${response.status}`);
+
     if (!response.ok) {
-      throw new Error(`Events API error: ${response.status}`);
+      console.error(`Events API error: ${response.status} ${response.statusText}`);
+      // Return empty data instead of error to prevent 404s
+      return NextResponse.json({
+        type: 'FeatureCollection',
+        features: [],
+        error: `API returned ${response.status}: ${response.statusText}`
+      });
     }
 
     const data = await response.json();
+    console.log(`Events API data received: ${data.features?.length || 0} events`);
 
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching events:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch events data' },
-      { status: 500 }
-    );
+    // Return empty data instead of error to prevent 404s
+    return NextResponse.json({
+      type: 'FeatureCollection',
+      features: [],
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }

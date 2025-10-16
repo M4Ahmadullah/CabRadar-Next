@@ -156,7 +156,7 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
             {/* Navigate Button */}
             <button className="transport-disruption-navigate-button">
               <img 
-                src="/Icons/navigation_icons/Navigate.png" 
+                src="/Icons/navigation_icons/locate.png" 
                 alt="Navigate" 
                 className="transport-disruption-navigate-button-icon"
               />
