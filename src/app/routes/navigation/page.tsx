@@ -40,7 +40,7 @@ export default function NavigationPage() {
   }, []);
 
   const handleItemClick = (item: NavigationItem) => {
-    window.location.href = `/${item.type}/${item.id}`;
+    window.location.href = `/routes/${item.type}/${item.id}`;
   };
 
   const sections = [
