@@ -1,5 +1,6 @@
 // components/content/RoadDisruptionCard.tsx
 import { motion } from 'framer-motion';
+import { StreetBadge } from '@/components/ui/StreetBadge';
 import { RoadBadge } from '@/components/ui/RoadBadge';
 import { RoadDisruptionData } from '@/lib/types/roadDisruptions';
 import { formatLondonTime, formatRelativeTime } from '@/lib/utils/timeUtils';
@@ -46,6 +47,16 @@ export const RoadDisruptionCard: React.FC<RoadDisruptionCardProps> = ({ data }) 
           <RoadBadge 
             type={data.roadType} 
             number={data.roadNumber}
+            size="enlarged" 
+          />
+        </div>
+      )}
+
+      {/* Street Badge - centered (only for Street roads) */}
+      {data.roadType === 'Street' && (
+        <div className="badge-container">
+          <StreetBadge 
+            label={data.roadName || data.roadNumber}
             size="enlarged" 
           />
         </div>

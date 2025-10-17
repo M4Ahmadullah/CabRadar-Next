@@ -692,34 +692,32 @@
   background-color: transparent;
 }
 
-/* EXACT mobile app inspector marker styles */
+/* EXACT mobile app inspector marker styles - transparent background for icon only */
 .marker.inspector {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .marker.inspector.tfl {
-  background-color: #0066CC;
+  background-color: transparent;
 }
 
 .marker.inspector.police-check {
-  background-color: #DC2626;
+  background-color: transparent;
 }
 
 .marker.inspector.clear {
-  background-color: #16A34A;
+  background-color: transparent;
 }
 
 .marker.inspector::before {
-  content: '👮';
-  font-size: 12px;
-  color: white;
+  display: none; /* Hide emoji since we're using PNG icon */
 }
 
 /* EXACT mobile app event marker styles */
@@ -924,6 +922,14 @@
 /* Ensure map sits above content if overlapping */
 .location-map-component { position: relative; z-index: 1; }
 
+/* Floating Share Button */
+.floating-share-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+}
+
 /* EXACT mobile app layout classes */
 .badge-container {
   margin-top: 0;
@@ -1083,21 +1089,21 @@
   width: 100%;
   max-width: 375px;
   min-width: 320px;
+  height: 100vh;
+  background: #FFFFFF;
   margin: 0 auto;
-  background-color: #FFFFFF;
-  min-height: 100vh;
-  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .inspector-content {
-  padding-top: 100px;
-  padding-bottom: 40px;
-  padding-left: 11px;
-  padding-right: 11px;
-}
-
-.inspector-content.with-live-icon {
-  padding-top: 150px;
+  padding-top: 110px; /* Match mobile app paddingTop */
+  padding-bottom: 20px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: stretch;
 }
 
 .inspector-card {
@@ -2392,10 +2398,10 @@
   left: 0;
   right: 0;
   height: 60px;
-  padding-top: 25px;
+  padding-top: 40px;
   padding-bottom: 20px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -2419,12 +2425,6 @@
   height: 50px;
 }
 
-.inspector-content {
-  padding-top: 110px;
-  padding-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
 
 /* Event Header Styles */
 .event-header {
@@ -2433,10 +2433,10 @@
   left: 0;
   right: 0;
   height: 60px;
-  padding-top: 25px;
+  padding-top: 40px;
   padding-bottom: 20px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -2493,9 +2493,9 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-top: 25px;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-top: 40px;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-bottom: 20px;
   background-color: transparent;
   width: 100%;
@@ -2788,4 +2788,606 @@
   font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
   color: #FFFFFF;
   font-weight: 600;
+}
+
+/* Inspector info spacing after map */
+.inspector-info-component.after-map {
+  margin-top: 28px;
+}
+
+/* ===== HEADER STYLES - MATCHING ANDROID DESIGN ===== */
+
+/* General header spacing for all pages */
+.event-header,
+.inspector-header,
+.transport-disruption-header,
+.road-disruption-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 25px; /* Match road disruption header spacing */
+  padding-bottom: 20px;
+  background-color: transparent;
+}
+
+/* ===== EVENTS SCREEN STYLES - MATCHING ANDROID DESIGN ===== */
+
+/* Event Container - Matching Road Disruption */
+.event-container {
+  width: 100%;
+  max-width: 375px;
+  min-width: 320px;
+  height: 100vh;
+  background: #FFFFFF;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.event-content {
+  padding-top: 110px; /* Match mobile app paddingTop */
+  padding-bottom: 20px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: stretch;
+}
+
+/* Event Title Section */
+.event-title-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.event-header-title {
+  font-size: 28px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1F2937;
+  font-weight: normal;
+}
+
+.event-attendance-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 0.5px solid #000000;
+  border-radius: 4px;
+  padding-left: 10px;
+  padding-right: 6px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.event-attendance-text {
+  font-size: 20px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #18109F;
+  margin-right: 6px;
+}
+
+.event-attendance-icon {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 5px;
+}
+
+/* Event Message Container */
+.event-message-container {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 35px;
+}
+
+.event-message-card {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding-top: 20px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 25px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.event-message-card.normal-event {
+  padding-top: 16px;
+  padding-bottom: 14px;
+}
+
+.event-message-header-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.event-message-title-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+
+.event-message-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  margin-bottom: 8px;
+}
+
+.event-message-venue-name {
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  font-size: 18px;
+  color: #000000;
+  letter-spacing: 0.34px;
+}
+
+.event-message-major-badge {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  background-color: #FF033E;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.event-message-major-badge-text {
+  font-size: 15px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.event-message-category-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 5px;
+  margin-top: -5px;
+}
+
+.event-message-display-text.major-event {
+  font-size: 17px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  letter-spacing: 0.2px;
+  line-height: 20px;
+  margin-top: -5px;
+  color: #000000;
+}
+
+.event-message-display-text.normal-event {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  letter-spacing: 0.2px;
+  line-height: 15px;
+  margin-top: -5px;
+  margin-left: -5px;
+  color: #000000;
+}
+
+.event-message-time-text {
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: -5px;
+}
+
+/* Comment Container */
+.event-comment-container {
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #F8F9FA;
+  border-radius: 8px;
+}
+
+.event-comment-text {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #1F2937;
+  line-height: 24px;
+}
+
+/* Location Container */
+.event-location-container {
+  margin-bottom: 8px;
+}
+
+.event-location-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-location-text {
+  font-size: 22px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #000000;
+  padding-left: 10px;
+}
+
+/* Map Container */
+.event-map-container {
+  height: 295px;
+  width: 104%;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  margin-left: -2%;
+  position: relative;
+}
+
+.event-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+}
+
+/* Distance and Time Container */
+.event-distance-time-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.event-distance-time-text {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.event-distance-text {
+  font-size: 18px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.event-separator-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.event-time-text {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Navigate Button */
+.event-navigate-button {
+  background-color: #0119A9;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-direction: row;
+  width: 97.5%;
+  align-self: center;
+  border: none;
+  cursor: pointer;
+}
+
+.event-navigate-button-icon {
+  width: 29px;
+  height: 29px;
+  margin-right: 9px;
+}
+
+.event-navigate-button-text {
+  font-size: 20px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #FFFFFF;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Horizontal Rule */
+.event-horizontal-rule {
+  height: 1px;
+  background-color: #E5E7EB;
+  margin-bottom: 20px;
+  width: 94%;
+  align-self: center;
+}
+
+/* Address Section */
+.event-address-section {
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
+.event-address-label {
+  font-size: 19px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1F2937;
+  margin-bottom: 0;
+}
+
+.event-address-value {
+  font-size: 17px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #000000;
+  line-height: 21px;
+  margin-bottom: 120px;
+  margin-top: 5px;
+  white-space: pre-line;
+}
+
+/* Bottom Spacer */
+.event-bottom-spacer {
+  height: 120px;
+}
+
+/* ===== INSPECTOR SCREEN STYLES - MATCHING TfLStopChecksMessageContent DESIGN ===== */
+
+/* Inspector Title Section */
+.inspector-title-section {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  padding-left: 10px;
+}
+
+.inspector-title {
+  font-size: 26px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1F2937;
+  flex: 1;
+  letter-spacing: 0.5px;
+  margin-top: 15px;
+}
+
+/* Inspector Live Icon Section */
+.inspector-live-icon-section {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding-left: 10px;
+  margin-top: -5px;
+}
+
+.inspector-live-icon-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.inspector-live-icon-container {
+  /* Maintain original LiveIcon positioning */
+}
+
+/* Inspector Type Section */
+.inspector-type-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  background-color: #F3F4F6;
+  border-radius: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.inspector-type-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inspector-type-icon-container {
+  width: 32px;
+  height: 33px;
+  border-radius: 16px;
+  background-color: #E5E7EB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.inspector-type-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.inspector-type-text {
+  font-size: 18px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1F2937;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.inspector-time-text {
+  font-size: 14px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+/* Inspector Location Text */
+.inspector-location-text {
+  font-size: 22px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1F2937;
+  margin-bottom: 16px;
+  padding-left: 10px;
+  font-weight: 600;
+}
+
+
+/* ===== TRANSPORT DISRUPTION SCREEN STYLES - MATCHING DisruptionMessageContent DESIGN ===== */
+
+/* Transport Disruption Container - Matching Road Disruption */
+.transport-disruption-container {
+  width: 100%;
+  max-width: 375px;
+  min-width: 320px;
+  height: 100vh;
+  background: #FFFFFF;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.transport-disruption-content {
+  padding-top: 110px; /* Match mobile app paddingTop */
+  padding-bottom: 20px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-items: stretch;
+}
+
+/* Transport Disruption Live Icon Container */
+.transport-disruption-live-icon-container {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+/* Transport Disruption Card Container */
+.transport-disruption-card-container {
+  margin-bottom: 30px;
+  padding-top: 8px;
+}
+
+/* Transport Disruption Info Container */
+.transport-disruption-info-container {
+  margin-bottom: 20px;
+}
+
+/* Transport Disruption Map Container */
+.transport-disruption-map-container {
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.transport-disruption-map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Transport Disruption Navigation Section */
+.transport-disruption-navigation-section {
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+/* Transport Disruption Distance Time Container */
+.transport-disruption-distance-time-container {
+  margin-bottom: 15px;
+}
+
+.transport-disruption-distance-time-text {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.transport-disruption-distance-text {
+  font-size: 18px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.transport-disruption-separator-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+.transport-disruption-time-text {
+  font-size: 16px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Transport Disruption Navigate Button */
+.transport-disruption-navigate-button {
+  background-color: #0119A9;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-direction: row;
+  width: 97.5%;
+  align-self: center;
+  border: none;
+  cursor: pointer;
+}
+
+.transport-disruption-navigate-button-icon {
+  width: 29px;
+  height: 29px;
+  margin-right: 9px;
+}
+
+.transport-disruption-navigate-button-text {
+  font-size: 20px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #FFFFFF;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* Transport Disruption Bottom Spacer */
+.transport-disruption-bottom-spacer {
+  height: 120px;
 }

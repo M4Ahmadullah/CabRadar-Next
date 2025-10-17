@@ -112,9 +112,18 @@ export const MapComponent: React.FC<MapComponentProps> = ({
         el.appendChild(iconImg);
       }
       
-      // Add type class for inspectors
+      // Add type class for inspectors and icon
       if (marker.type === 'inspector' && marker.data.type) {
         el.classList.add(marker.data.type.toLowerCase());
+        
+        // Add the actual PNG icon for inspector markers (no background)
+        const iconImg = document.createElement('img');
+        iconImg.src = '/Icons/message_status_icons/inspector.png'; // Assuming this icon exists
+        iconImg.style.width = '32px';
+        iconImg.style.height = '32px';
+        iconImg.style.objectFit = 'contain';
+        iconImg.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'; // Add shadow for visibility
+        el.appendChild(iconImg);
       }
       
       // Add category class for events

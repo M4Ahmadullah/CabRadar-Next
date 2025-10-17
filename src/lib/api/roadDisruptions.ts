@@ -1,5 +1,6 @@
 // lib/api/roadDisruptions.ts
 import { RoadDisruptionData, RoadDisruptionResponse } from '@/lib/types/roadDisruptions';
+import { createRoadDisruptionSlug, extractIdFromSlug } from '@/lib/utils/slugUtils';
 
 // Road parsing functions (same as mobile app)
 interface ParsedRoad {
@@ -62,9 +63,9 @@ function extractStreetNames(roadDescription: string): string[] {
 
 const EXTERNAL_API_BASE_URL = 'https://list-api-service.hellocabradar.workers.dev';
 
-export const getRoadDisruption = async (id: string): Promise<RoadDisruptionData> => {
+export const getRoadDisruption = async (cleanName: string): Promise<RoadDisruptionData> => {
   try {
-    // Use internal API route to avoid CORS issues
+    // Get all disruptions from Central London first
     const response = await fetch(`/api/roads?lat=51.5074&lon=-0.1276`, {
       headers: {
         'Accept': 'application/json',
@@ -78,11 +79,40 @@ export const getRoadDisruption = async (id: string): Promise<RoadDisruptionData>
 
     const data = await response.json();
 
-    // Find the disruption by ID
+    // Find the disruption by matching road_name or road_description (converted to clean name)
     for (const feature of data.features || []) {
       const props = feature.properties;
       
-      if (props.disruption_id === id) {
+      // Extract road name from road_description first (Android team's approach)
+      let roadName = '';
+      
+      // First try to extract from road_description (Android team's approach)
+      if (props.road_description) {
+        // Extract road name from road_description like "[A200] EVELYN STREET (SE8 ) (Lewisham)"
+        const roadMatch = props.road_description.match(/\[[AM]\d+[A-Z]*\]\s*([^(]+)/);
+        if (roadMatch) {
+          roadName = roadMatch[1].trim();
+        } else {
+          // If no road code pattern, use the whole description before parentheses
+          const descMatch = props.road_description.match(/^([^(]+)/);
+          if (descMatch) {
+            roadName = descMatch[1].trim();
+          }
+        }
+      }
+      
+      // Fallback to road_name if road_description extraction failed
+      if (!roadName && props.road_name) {
+        roadName = props.road_name;
+      }
+      
+      const cleanRoadName = roadName.toLowerCase().replace(/\s+/g, '-');
+      
+      if (cleanRoadName === cleanName) {
+        // Use the actual disruption coordinates for more accurate data
+        const disruptionCoords = feature.geometry.coordinates || [51.5074, -0.1276];
+        const [lat, lon] = disruptionCoords;
+        
         // Extract road type and number using mobile app's exact regex pattern
         const roadDescription = props.road_description || props.road_name || '';
         const comments = props.comments || '';
@@ -138,7 +168,7 @@ export const getRoadDisruption = async (id: string): Promise<RoadDisruptionData>
           roadName: properRoadName,
           currentUpdate: props.current_update || props.category || 'Road disruption reported',
           severity: props.severity || 'Moderate',
-          coordinates: feature.geometry.coordinates || [51.5074, -0.1276],
+          coordinates: disruptionCoords, // Use actual disruption coordinates
           category: props.category || 'Road Works',
           subCategory: props.sub_category || 'Maintenance',
           fromDate: props.from_date || new Date().toISOString(),
@@ -154,10 +184,19 @@ export const getRoadDisruption = async (id: string): Promise<RoadDisruptionData>
       }
     }
 
-    throw new Error(`Road disruption with ID ${id} not found`);
+    // If exact match not found, try fuzzy matching for common variations
+    console.warn(`Exact match not found for "${cleanName}". Available roads:`, 
+      data.features?.map((f: any) => f.properties.road_name?.toLowerCase().replace(/\s+/g, '-')).slice(0, 5)
+    );
+    
+    throw new Error(`Road disruption with name "${cleanName}" not found. Please check the road name spelling.`);
   } catch (error) {
     console.error('Error fetching road disruption:', error);
     throw error;
   }
+};
+
+export const generateRoadDisruptionSlug = (roadName: string, disruptionId: string): string => {
+  return createRoadDisruptionSlug(roadName, disruptionId);
 };
 

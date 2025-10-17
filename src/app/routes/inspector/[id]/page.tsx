@@ -9,7 +9,7 @@ import { LiveIcon } from '@/components/ui/LiveIcon';
 import { InspectorCard } from '@/components/content/InspectorCard';
 import { InspectorInfo } from '@/components/content/InspectorInfo';
 import { MapComponent } from '@/components/ui/MapComponent';
-import { ShareButton } from '@/components/ui/ShareButton';
+import { MapMaximizer } from '@/components/ui/MapMaximizer';
 import { getInspector } from '@/lib/api/inspectors';
 import { isLive } from '@/lib/utils/timeUtils';
 import { useState, useEffect } from 'react';
@@ -25,13 +25,20 @@ export default function InspectorPage({ params }: InspectorPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string>('');
+  const [isMapMaximized, setIsMapMaximized] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resolvedParams = await params;
         setId(resolvedParams.id);
-        const data = await getInspector(resolvedParams.id);
+        
+        // Extract coordinates from URL parameters if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const lat = urlParams.get('lat') ? parseFloat(urlParams.get('lat')!) : undefined;
+        const lon = urlParams.get('lon') ? parseFloat(urlParams.get('lon')!) : undefined;
+        
+        const data = await getInspector(resolvedParams.id, lat, lon);
         setInspectorData(data);
       } catch (err) {
         console.error('Error fetching inspector:', err);
@@ -52,13 +59,13 @@ export default function InspectorPage({ params }: InspectorPageProps) {
             className="inspector-back-button"
             onClick={() => window.history.back()}
           >
-            <img src="/Icons/navigation_icons/Back.png" alt="Back" width={32} height={32} />
+            <img src="/Icons/navigation_icons/Back.png" alt="Back" width={50} height={50} />
           </button>
           <button 
             className="inspector-close-button"
             onClick={() => window.location.href = '/'}
           >
-            <img src="/Icons/navigation_icons/Close.png" alt="Close" width={32} height={32} />
+            <img src="/Icons/navigation_icons/Close.png" alt="Close" width={50} height={50} />
           </button>
         </div>
         <div className="flex items-center justify-center h-64">
@@ -72,7 +79,6 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     notFound();
   }
 
-  const shareUrl = `/inspector/${id}`;
   const isLiveInspector = isLive(new Date(inspectorData.time));
 
   const mapMarkers = [
@@ -88,36 +94,89 @@ export default function InspectorPage({ params }: InspectorPageProps) {
   ];
 
   return (
-    <motion.div 
-      className="mobile-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="inspector-header">
-        <button 
-          className="inspector-back-button"
-          onClick={() => window.history.back()}
-        >
-          <img src="/Icons/navigation_icons/Back.png" alt="Back" width={32} height={32} />
-        </button>
-        <button 
-          className="inspector-close-button"
-          onClick={() => window.location.href = '/'}
-        >
-          <img src="/Icons/navigation_icons/Close.png" alt="Close" width={32} height={32} />
-        </button>
-      </div>
-      
-      <motion.div 
-        className="inspector-content"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.4 }}
-      >
-        {isLiveInspector && <LiveIcon />}
+    <>
+      <div className="inspector-container">
+        <div className="inspector-header" style={{ paddingTop: '50px' }}>
+          <button 
+            className="inspector-back-button"
+            onClick={() => window.history.back()}
+          >
+            <img src="/Icons/navigation_icons/Back.png" alt="Back" width={50} height={50} />
+          </button>
+          <button 
+            className="inspector-close-button"
+            onClick={() => window.location.href = '/'}
+          >
+            <img src="/Icons/navigation_icons/Close.png" alt="Close" width={50} height={50} />
+          </button>
+        </div>
         
-        <InspectorCard data={inspectorData} />
+        <div className="inspector-content">
+        {/* Title Section */}
+        <div className="inspector-title-section">
+          <div className="inspector-title">{inspectorData.locationName}</div>
+        </div>
+
+        {/* Live Icon Section */}
+        <div className="inspector-live-icon-section">
+          <div className="inspector-live-icon-row">
+            <div className="inspector-live-icon-container">
+              <LiveIcon 
+                backgroundColor="gray" 
+                fontFamily="var(--font-hammersmith), 'Hammersmith One', sans-serif"
+                letterSpacing={1}
+                textMarginLeft={3.5}
+                textMarginTop={2}
+                outerCircleSizeMultiplier={1.1}
+                innerWhiteCircleSizeMultiplier={1.1}
+                centerCircleSizeMultiplier={1.2}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Type Section */}
+        <div className="inspector-type-section">
+          <div className="inspector-type-content">
+            <div className="inspector-type-icon-container">
+              <img 
+                src={`/Icons/inpectors_icons/${inspectorData.type === 'tfl' ? 'police.png' : inspectorData.type === 'police-check' ? 'alert.png' : 'white_like.png'}`}
+                alt="Inspector Type" 
+                className="inspector-type-icon"
+              />
+            </div>
+            <div className="inspector-type-text">
+              {inspectorData.type === 'tfl' ? 'TfL Stop Check' : 
+               inspectorData.type === 'police-check' ? 'Police Stop Check' : 
+               'Clear (No TfL / police)'}
+            </div>
+          </div>
+          <div className="inspector-time-text">
+            {new Date(inspectorData.time).toLocaleTimeString('en-GB', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            })}
+          </div>
+        </div>
+        
+        {/* Location Text */}
+        <div className="location-text">Location</div>
+        
+        {/* Map */}
+        <div className="map-container" style={{ margin: '0 auto', width: '100%' }}>
+          <MapComponent 
+            coordinates={inspectorData.coordinates}
+            zoom={15}
+            className="map-rounded w-full h-[320px]"
+            markers={mapMarkers}
+            onMaximize={() => setIsMapMaximized(true)}
+            showMaximizeButton={true}
+          />
+        </div>
+        
+        {/* Map Spacing */}
+        <div className="map-spacing" />
         
         <InspectorInfo 
           originalMessage={inspectorData.originalMessage}
@@ -126,28 +185,18 @@ export default function InspectorPage({ params }: InspectorPageProps) {
           lastUpdated={inspectorData.time}
           matchType="Exact Match"
         />
-        
-        <motion.div 
-          className="px-4 mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.4 }}
-        >
-          <h3 className="text-message-title mb-3">Location</h3>
-          <MapComponent 
-            coordinates={inspectorData.coordinates}
-            zoom={15}
-            className="w-full h-64 rounded-lg"
-            markers={mapMarkers}
-          />
-        </motion.div>
-        
-        <ShareButton 
-          url={shareUrl}
-          title={`${inspectorData.type} check at ${inspectorData.locationName}`}
-          buttonText="Share This Check"
-        />
-      </motion.div>
-    </motion.div>
+        </div>
+      </div>
+
+      {/* Map Maximizer - Rendered outside mobile container for full screen */}
+      <MapMaximizer
+        isMaximized={isMapMaximized}
+        onMinimize={() => setIsMapMaximized(false)}
+        coordinates={inspectorData.coordinates}
+        type={inspectorData.type}
+        locationName={inspectorData.locationName}
+        markers={mapMarkers}
+      />
+    </>
   );
 }

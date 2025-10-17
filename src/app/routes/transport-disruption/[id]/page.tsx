@@ -9,6 +9,7 @@ import { LiveIcon } from '@/components/ui/LiveIcon';
 import { TransportDisruptionCard } from '@/components/content/TransportDisruptionCard';
 import { TransportDisruptionInfo } from '@/components/content/TransportDisruptionInfo';
 import { MapComponent } from '@/components/ui/MapComponent';
+import { MapMaximizer } from '@/components/ui/MapMaximizer';
 import { getTransportDisruption } from '@/lib/api/transportDisruptions';
 import { isLive } from '@/lib/utils/timeUtils';
 import { useState, useEffect } from 'react';
@@ -24,13 +25,20 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string>('');
+  const [isMapMaximized, setIsMapMaximized] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resolvedParams = await params;
         setId(resolvedParams.id);
-        const data = await getTransportDisruption(resolvedParams.id);
+        
+        // Extract coordinates from URL parameters if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const lat = urlParams.get('lat') ? parseFloat(urlParams.get('lat')!) : undefined;
+        const lon = urlParams.get('lon') ? parseFloat(urlParams.get('lon')!) : undefined;
+        
+        const data = await getTransportDisruption(resolvedParams.id, lat, lon);
         setDisruptionData(data);
       } catch (err) {
         console.error('Error fetching transport disruption:', err);
@@ -71,7 +79,7 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
     notFound();
   }
 
-  const shareUrl = `/transport-disruption/${id}`;
+  const shareUrl = `/routes/transport-disruption/${id}`;
   const isLiveDisruption = isLive(new Date(disruptionData.lastUpdated));
 
   const mapMarkers = [
@@ -88,27 +96,26 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
   ];
 
   return (
-    <div className="mobile-container">
-      {/* Header with Back and Close - EXACT mobile app positioning */}
-      <div className="transport-disruption-header">
-        <button 
-          className="transport-disruption-back-button"
-          onClick={() => window.history.back()}
-        >
-          <img src="/Icons/navigation_icons/Back.png" alt="Back" width={50} height={50} />
-        </button>
-        <button 
-          className="transport-disruption-close-button"
-          onClick={() => window.location.href = '/'}
-        >
-          <img src="/Icons/navigation_icons/Close.png" alt="Close" width={50} height={50} />
-        </button>
-      </div>
-      
-      <div className="transport-disruption-scroll-container">
-        <div className="transport-disruption-scroll-content">
+    <>
+      <div className="transport-disruption-container">
+        <div className="transport-disruption-header" style={{ paddingTop: '25px' }}>
+          <button 
+            className="transport-disruption-back-button"
+            onClick={() => window.history.back()}
+          >
+            <img src="/Icons/navigation_icons/Back.png" alt="Back" width={50} height={50} />
+          </button>
+          <button 
+            className="transport-disruption-close-button"
+            onClick={() => window.location.href = '/'}
+          >
+            <img src="/Icons/navigation_icons/Close.png" alt="Close" width={50} height={50} />
+          </button>
+        </div>
+        
+        <div className="transport-disruption-content">
           {/* Live Icon */}
-          <div className="transport-disruption-live-icon-container" style={{ marginTop: '20px', marginBottom: '10px', marginLeft: '30px' }}>
+          <div className="transport-disruption-live-icon-container">
             <LiveIcon 
               backgroundColor="white" 
               fontFamily="var(--font-hammersmith), 'Hammersmith One', sans-serif" 
@@ -119,33 +126,37 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
           </div>
 
           {/* Disruption Card */}
-          <div className="transport-disruption-card-container" style={{ marginBottom: '30px', paddingTop: '8px' }}>
+          <div className="transport-disruption-card-container">
             <TransportDisruptionCard data={disruptionData} />
           </div>
 
           {/* Description, Last Updated, and Location Info */}
-          <div style={{ marginBottom: '20px' }}>
+          <div className="transport-disruption-info-container">
             <TransportDisruptionInfo 
               description={disruptionData.description}
               lastUpdated={disruptionData.lastUpdated}
             />
           </div>
 
-          {/* Map - Using same approach as RoadDisruption */}
-          <div className="map-container" style={{ margin: '0 auto', width: '100%', marginBottom: '20px' }}>
+          {/* Map */}
+          <div className="map-container" style={{ margin: '0 auto', width: '100%' }}>
             <MapComponent 
               coordinates={disruptionData.coordinates}
               zoom={15}
               className="map-rounded w-full h-[320px]"
               markers={mapMarkers}
+              onMaximize={() => setIsMapMaximized(true)}
               showMaximizeButton={true}
             />
           </div>
 
+          {/* Map Spacing */}
+          <div className="map-spacing" />
+
           {/* Navigation Section */}
-          <div className="transport-disruption-navigation-section" style={{ marginTop: '20px', marginBottom: '40px' }}>
+          <div className="transport-disruption-navigation-section">
             {/* Distance and Time */}
-            <div className="transport-disruption-distance-time-container" style={{ marginBottom: '15px' }}>
+            <div className="transport-disruption-distance-time-container">
               <div className="transport-disruption-distance-time-text">
                 <span className="transport-disruption-distance-text">2.1 miles</span>
                 <span className="transport-disruption-separator-text"> | </span>
@@ -156,7 +167,7 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
             {/* Navigate Button */}
             <button className="transport-disruption-navigate-button">
               <img 
-                src="/Icons/navigation_icons/locate.png" 
+                src="/Icons/event_icons/navigate_icon.png" 
                 alt="Navigate" 
                 className="transport-disruption-navigate-button-icon"
               />
@@ -168,6 +179,16 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
           <div className="transport-disruption-bottom-spacer" />
         </div>
       </div>
-    </div>
+
+      {/* Map Maximizer - Rendered outside mobile container for full screen */}
+      <MapMaximizer
+        isMaximized={isMapMaximized}
+        onMinimize={() => setIsMapMaximized(false)}
+        coordinates={disruptionData.coordinates}
+        type="Moderate"
+        locationName={disruptionData.commonName}
+        markers={mapMarkers}
+      />
+    </>
   );
 }

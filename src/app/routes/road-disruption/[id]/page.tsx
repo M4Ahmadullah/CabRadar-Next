@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react';
 
 interface RoadDisruptionPageProps {
   params: Promise<{
-    id: string;
+    id: string; // This is now a slug like "lambeth-bridge-TIMS-204461"
   }>;
 }
 
@@ -24,15 +24,15 @@ export default function RoadDisruptionPage({ params }: RoadDisruptionPageProps) 
   const [disruptionData, setDisruptionData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [id, setId] = useState<string>('');
+  const [id, setId] = useState<string>(''); // Store the slug
   const [isMapMaximized, setIsMapMaximized] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resolvedParams = await params;
-        setId(resolvedParams.id);
-        const data = await getRoadDisruption(resolvedParams.id);
+        setId(resolvedParams.id); // Store the slug
+        const data = await getRoadDisruption(resolvedParams.id); // Pass slug to API
         setDisruptionData(data);
       } catch (err) {
         console.error('Error fetching road disruption:', err);
@@ -64,7 +64,6 @@ export default function RoadDisruptionPage({ params }: RoadDisruptionPageProps) 
     notFound();
   }
 
-  const shareUrl = `/road-disruption/${id}`;
   const isLiveDisruption = isLive(new Date(disruptionData.lastUpdated));
 
   const mapMarkers = [

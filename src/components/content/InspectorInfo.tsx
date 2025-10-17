@@ -28,20 +28,22 @@ export const InspectorInfo: React.FC<InspectorInfoProps> = ({
   };
 
   return (
-    <div className={`inspector-info-component${className ? ` ${className}` : ''}`}>
+    <div className={`inspector-info-component${className ? ` ${className}` : ''}`} style={{ marginLeft: '10px', marginRight: '15px' }}>
       {/* Comments Section */}
       {originalMessage && (
-        <div className="comments-section">
-          <div className="comments-title">Comments</div>
-          <div className="comments-text">{originalMessage}</div>
+        <div className="content-section">
+          <div className="title-spacing" />
+          <div className="section-title">Comments</div>
+          <div className="section-text">{originalMessage}</div>
         </div>
       )}
 
       {/* Last Updated Section */}
       {lastUpdated && (
-        <div className="last-updated-section">
-          <div className="last-updated-label">Last Updated</div>
-          <div className="last-updated-value">{formatDateTime(lastUpdated)}</div>
+        <div className="content-section">
+          <div className="title-spacing" />
+          <div className="section-title">Last Updated</div>
+          <div className="section-text">{formatDateTime(lastUpdated)}</div>
         </div>
       )}
     </div>

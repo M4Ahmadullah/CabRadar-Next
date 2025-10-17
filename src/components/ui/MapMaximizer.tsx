@@ -21,7 +21,7 @@ interface MapMaximizerProps {
   userLocation?: [number, number];
   markers?: Array<{
     coordinates: [number, number];
-    type: 'disruption' | 'inspector';
+    type: 'disruption' | 'inspector' | 'event' | 'transport-disruption';
     data: any;
   }>;
 }

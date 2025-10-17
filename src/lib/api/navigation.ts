@@ -1,8 +1,9 @@
 // lib/api/navigation.ts
 import { apiService } from '@/lib/services/apiService';
+import { createRoadDisruptionSlug, createEventSlug, createInspectorSlug, createTransportDisruptionSlug } from '@/lib/utils/slugUtils';
 
 export interface NavigationItem {
-  id: string;
+  id: string; // This is now a slug like "lambeth-bridge-TIMS-204461"
   type: 'road-disruption' | 'inspector' | 'event' | 'transport-disruption';
   title: string;
   description: string;
@@ -31,10 +32,14 @@ export const getAvailableRoadDisruptions = async (limit: number = 5): Promise<Na
       
       const props = feature.properties;
       
+      // Use only the clean street name for URL - no technical details
+      const roadName = props.road_name || 'Unknown Road';
+      const cleanName = roadName.toLowerCase().replace(/\s+/g, '-');
+      
       disruptions.push({
-        id: props.disruption_id,
+        id: cleanName, // Use clean name only
         type: 'road-disruption' as const,
-        title: `${props.severity} on ${props.road_name || props.road_description}`,
+        title: `${props.severity} on ${roadName}`,
         description: props.current_update || props.category || 'Road disruption reported',
         icon: '🚧',
         color: props.severity === 'Serious' ? '#DC2626' : 
@@ -64,10 +69,13 @@ export const getAvailableInspectors = async (limit: number = 5): Promise<Navigat
       const props = feature.properties;
       const inspectorData = props.data;
       
+      const locationName = inspectorData.formattedAddress?.split(',')[0] || 'Unknown location';
+      const slug = createInspectorSlug(locationName, props.id);
+      
       inspectors.push({
-        id: props.id,
+        id: slug, // Use slug instead of raw ID
         type: 'inspector' as const,
-        title: `${inspectorData.type} check at ${inspectorData.formattedAddress?.split(',')[0] || 'Unknown location'}`,
+        title: `${inspectorData.type} check at ${locationName}`,
         description: inspectorData.originalMessage,
         icon: '👮',
         color: inspectorData.type === 'tfl' ? '#0066CC' : 
@@ -95,8 +103,10 @@ export const getAvailableEvents = async (limit: number = 5): Promise<NavigationI
       
       const eventData = feature.properties;
       
+      const slug = createEventSlug(eventData.title, eventData.id);
+      
       events.push({
-        id: eventData.id,
+        id: slug, // Use slug instead of raw ID
         type: 'event' as const,
         title: eventData.title,
         description: `${eventData.category || 'Event'} at ${eventData.venue_name || 'Unknown venue'}`,
@@ -137,8 +147,10 @@ export const getAvailableTransportDisruptions = async (limit: number = 5): Promi
       const firstDisruption = Object.values(props.disruptions || {})[0] as any;
       const status = firstDisruption?.type || 'Disruption';
       
+      const slug = createTransportDisruptionSlug(props.commonName, props.id);
+      
       disruptions.push({
-        id: props.id,
+        id: slug, // Use slug instead of raw ID
         type: 'transport-disruption' as const,
         title: `${status} on ${props.service}`,
         description: `${props.service} at ${props.commonName}`,
