@@ -519,6 +519,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px; /* Mobile app: marginBottom: 8 */
+  padding: 0 8px; /* Add horizontal padding for breathing room */
 }
 
 .message-type-info {
@@ -540,6 +541,8 @@
   font-weight: normal !important; /* Mobile app: no fontWeight specified (normal) */
   color: #000000 !important; /* Mobile app: color: '#000000' */
   letter-spacing: 0.34px !important; /* Mobile app: letterSpacing: 0.34 */
+  flex: 1; /* Allow title to take available space */
+  margin-right: 12px; /* Add margin to separate from time */
 }
 
 .message-time-ago {
@@ -1001,6 +1004,14 @@
   margin-bottom: 35px;
 }
 
+.affected-roads-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .affected-roads-label {
   font-size: 20px;
   font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
@@ -1197,14 +1208,171 @@
   height: 120px;
   background-color: #FFFFFF;
   border-radius: 8px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 15px 20px;
   margin-top: 10px;
   margin-bottom: 20px;
   align-self: center;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.update-report-title {
+  font-size: 18px;
+  font-family: var(--font-gill-sans), 'Gill Sans MT', sans-serif;
+  color: #000000;
+  letter-spacing: 0.3px;
+  text-align: center;
+  margin-top: 3px;
+  margin-bottom: 17px;
+}
+
+.update-buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Two-button layout styles */
+.still-here-button {
+  flex: 1;
+  height: 47px;
+  background-color: #FFFFFF;
+  border: 2px solid #D02420;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.still-here-button:hover {
+  background-color: #f8f8f8;
+}
+
+.still-here-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.still-here-button-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #D02420;
+  letter-spacing: 0.3px;
+}
+
+.clear-button {
+  flex: 1;
+  height: 47px;
+  background-color: #D7FFDC;
+  border: 2px solid #D7FFDC;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-button:hover {
+  background-color: #c7f7cc;
+}
+
+.clear-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clear-button-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #1FA836;
+  letter-spacing: 0.3px;
+}
+
+/* Three-button layout styles */
+.tfl-button-three-buttons {
+  flex: 0.6;
+  height: 47px;
+  background-color: #FFFFFF;
+  border: 2px solid #0119A9;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: -2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tfl-button-three-buttons:hover {
+  background-color: #f8f8f8;
+}
+
+.tfl-button-three-buttons:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tfl-button-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #0119A9;
+  letter-spacing: 0.3px;
+}
+
+.police-button-three-buttons {
+  flex: 1;
+  height: 47px;
+  background-color: #FFFFFF;
+  border: 2px solid #D02420;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: -2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.police-button-three-buttons:hover {
+  background-color: #f8f8f8;
+}
+
+.police-button-three-buttons:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.police-button-text {
+  font-size: 16px;
+  font-family: var(--font-hammersmith), 'Hammersmith One', sans-serif;
+  color: #D02420;
+  letter-spacing: 0.3px;
+}
+
+.clear-button-three-buttons {
+  flex: 0.7;
+  height: 47px;
+  background-color: #D7FFDC;
+  border: 2px solid #D7FFDC;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-button-three-buttons:hover {
+  background-color: #c7f7cc;
+}
+
+.clear-button-three-buttons:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .update-report-title {
@@ -3187,10 +3355,6 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-.inspector-live-icon-container {
-  /* Maintain original LiveIcon positioning */
 }
 
 /* Inspector Type Section */

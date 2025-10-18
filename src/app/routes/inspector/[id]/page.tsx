@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { LiveIcon } from '@/components/ui/LiveIcon';
 import { InspectorCard } from '@/components/content/InspectorCard';
 import { InspectorInfo } from '@/components/content/InspectorInfo';
+import { UpdateReportContainer } from '@/components/content/UpdateReportContainer';
 import { MapComponent } from '@/components/ui/MapComponent';
 import { MapMaximizer } from '@/components/ui/MapMaximizer';
 import { getInspector } from '@/lib/api/inspectors';
@@ -26,6 +27,8 @@ export default function InspectorPage({ params }: InspectorPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [id, setId] = useState<string>('');
   const [isMapMaximized, setIsMapMaximized] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentReportType, setCurrentReportType] = useState<'tfl' | 'police-check' | 'clear'>('tfl');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +43,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         
         const data = await getInspector(resolvedParams.id, lat, lon);
         setInspectorData(data);
+        setCurrentReportType(data.type || 'tfl');
       } catch (err) {
         console.error('Error fetching inspector:', err);
         setError('Failed to load inspector data');
@@ -79,6 +83,68 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     notFound();
   }
 
+  const formatTimeAgo = (timeString: string) => {
+    const now = Date.now();
+    const time = new Date(timeString).getTime();
+    const diffMinutes = Math.floor((now - time) / (1000 * 60));
+    
+    if (diffMinutes < 60) {
+      return `${diffMinutes} mins ago`;
+    } else {
+      const hours = Math.floor(diffMinutes / 60);
+      const minutes = diffMinutes % 60;
+      if (minutes === 0) {
+        return `${hours} hr ago`;
+      } else {
+        return `${hours} hr ${minutes} mins ago`;
+      }
+    }
+  };
+
+  const submitUpdateReport = async (reportType: 'still-here' | 'clear' | 'tfl' | 'police-check') => {
+    if (!inspectorData?.coordinates) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call - replace with actual API endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Update current state with new data
+      let newType: 'tfl' | 'police-check' | 'clear';
+      switch (reportType) {
+        case 'still-here':
+          newType = currentReportType; // Keep current type
+          break;
+        case 'clear':
+          newType = 'clear';
+          break;
+        case 'tfl':
+          newType = 'tfl';
+          break;
+        case 'police-check':
+          newType = 'police-check';
+          break;
+        default:
+          newType = currentReportType;
+      }
+      
+      setCurrentReportType(newType);
+      
+      // Update inspector data
+      setInspectorData({
+        ...inspectorData,
+        type: newType,
+        time: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('Error updating report:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const isLiveInspector = isLive(new Date(inspectorData.time));
 
   const mapMarkers = [
@@ -86,7 +152,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
       coordinates: inspectorData.coordinates,
       type: 'inspector' as const,
       data: {
-        type: inspectorData.type,
+        type: currentReportType,
         status: inspectorData.status,
         locationName: inspectorData.locationName
       }
@@ -118,7 +184,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         </div>
 
         {/* Live Icon Section */}
-        <div className="inspector-live-icon-section">
+        <div className="inspector-live-icon-section" style={{ marginTop: '15px' }}>
           <div className="inspector-live-icon-row">
             <div className="inspector-live-icon-container">
               <LiveIcon 
@@ -136,32 +202,33 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         </div>
 
         {/* Type Section */}
-        <div className="inspector-type-section">
-          <div className="inspector-type-content">
+        <div className="inspector-type-section" style={{ width: '95%', margin: '0 auto', marginBottom: '10px' }}>
+          <div className="inspector-type-content ">
             <div className="inspector-type-icon-container">
               <img 
-                src={`/Icons/inpectors_icons/${inspectorData.type === 'tfl' ? 'police.png' : inspectorData.type === 'police-check' ? 'alert.png' : 'white_like.png'}`}
+                src={`/Icons/inpectors_icons/${currentReportType === 'tfl' ? 'police.png' : currentReportType === 'police-check' ? 'alert.png' : 'white_like.png'}`}
                 alt="Inspector Type" 
                 className="inspector-type-icon"
               />
             </div>
             <div className="inspector-type-text">
-              {inspectorData.type === 'tfl' ? 'TfL Stop Check' : 
-               inspectorData.type === 'police-check' ? 'Police Stop Check' : 
+              {currentReportType === 'tfl' ? 'TfL Stop Check' : 
+               currentReportType === 'police-check' ? 'Police Stop Check' : 
                'Clear (No TfL / police)'}
             </div>
           </div>
           <div className="inspector-time-text">
-            {new Date(inspectorData.time).toLocaleTimeString('en-GB', { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false 
-            })}
+            {formatTimeAgo(inspectorData.time)}
           </div>
         </div>
-        
-        {/* Location Text */}
-        <div className="location-text">Location</div>
+
+        {/* Update Report Container */}
+        <UpdateReportContainer
+          currentReportType={currentReportType}
+          onSubmitReport={submitUpdateReport}
+          isSubmitting={isSubmitting}
+          isWithinBoundary={true}
+        />
         
         {/* Map */}
         <div className="map-container" style={{ margin: '0 auto', width: '100%' }}>
@@ -193,8 +260,10 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         isMaximized={isMapMaximized}
         onMinimize={() => setIsMapMaximized(false)}
         coordinates={inspectorData.coordinates}
-        type={inspectorData.type}
+        type={currentReportType}
         locationName={inspectorData.locationName}
+        lastUpdated={inspectorData.time}
+        timeAgo={formatTimeAgo(inspectorData.time)}
         markers={mapMarkers}
       />
     </>

@@ -1,7 +1,9 @@
 // components/content/DisruptionInfo.tsx
 import { motion } from 'framer-motion';
 import { RoadBadge } from '@/components/ui/RoadBadge';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { formatLondonTime } from '@/lib/utils/timeUtils';
+import { generateRoadDisruptionSlug } from '@/lib/api/roadDisruptions';
 
 interface DisruptionInfoProps {
   description: string;
@@ -12,6 +14,8 @@ interface DisruptionInfoProps {
   fromDate?: string;
   toDate?: string;
   comments?: string;
+  roadName?: string;
+  disruptionId?: string;
   className?: string;
 }
 
@@ -24,7 +28,9 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
   subCategory,
   fromDate,
   toDate,
-  comments
+  comments,
+  roadName,
+  disruptionId
 }) => {
   const formatDateTime = (dateString: string) => {
     try {
@@ -37,9 +43,19 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
 
   return (
     <div className={`disruption-info-component${className ? ` ${className}` : ''}`} style={{ marginLeft: '10px', marginRight: '15px' }}>
-      {/* Affected Roads Section */}      {affectedRoads && affectedRoads.length > 0 && (
+      {/* Affected Roads Section */}
+      {affectedRoads && affectedRoads.length > 0 && (
         <div className="affected-roads-section">
-          <div className="affected-roads-label ml-1">Affected Roads</div>
+          <div className="affected-roads-header">
+            <div className="affected-roads-label ml-1">Affected Roads</div>
+            {roadName && disruptionId && (
+              <ShareButton 
+                url={`/routes/road-disruption/${generateRoadDisruptionSlug(roadName, disruptionId)}`}
+                title={`Road Disruption: ${roadName}`}
+                buttonText="Share"
+              />
+            )}
+          </div>
           <div className="road-badges-container">
             {/* A and M type roads displayed inline */}
             {affectedRoads

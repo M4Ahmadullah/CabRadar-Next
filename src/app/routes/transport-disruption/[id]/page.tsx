@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { LiveIcon } from '@/components/ui/LiveIcon';
 import { TransportDisruptionCard } from '@/components/content/TransportDisruptionCard';
 import { TransportDisruptionInfo } from '@/components/content/TransportDisruptionInfo';
+import { TransportDisruptionNavigation } from '@/components/content/TransportDisruptionNavigation';
 import { MapComponent } from '@/components/ui/MapComponent';
 import { MapMaximizer } from '@/components/ui/MapMaximizer';
 import { getTransportDisruption } from '@/lib/api/transportDisruptions';
@@ -154,26 +155,10 @@ export default function TransportDisruptionPage({ params }: TransportDisruptionP
           <div className="map-spacing" />
 
           {/* Navigation Section */}
-          <div className="transport-disruption-navigation-section">
-            {/* Distance and Time */}
-            <div className="transport-disruption-distance-time-container">
-              <div className="transport-disruption-distance-time-text">
-                <span className="transport-disruption-distance-text">2.1 miles</span>
-                <span className="transport-disruption-separator-text"> | </span>
-                <span className="transport-disruption-time-text">8 mins</span>
-              </div>
-            </div>
-            
-            {/* Navigate Button */}
-            <button className="transport-disruption-navigate-button">
-              <img 
-                src="/Icons/event_icons/navigate_icon.png" 
-                alt="Navigate" 
-                className="transport-disruption-navigate-button-icon"
-              />
-              <span className="transport-disruption-navigate-button-text">Navigate To</span>
-            </button>
-          </div>
+          <TransportDisruptionNavigation 
+            coordinates={disruptionData.coordinates}
+            title={disruptionData.commonName}
+          />
 
           {/* Bottom Spacer */}
           <div className="transport-disruption-bottom-spacer" />

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { MapComponent } from '@/components/ui/MapComponent';
 import { MapMaximizer } from '@/components/ui/MapMaximizer';
+import { EventsNavigation } from '@/components/content/EventsNavigation';
 import { getEvent } from '@/lib/api/events';
 import { useState, useEffect } from 'react';
 
@@ -245,23 +246,10 @@ export default function EventPage({ params }: EventPageProps) {
         <div className="map-spacing" />
         
         {/* Distance and Time */}
-        <div className="event-distance-time-container">
-          <div className="event-distance-time-text">
-            <span className="event-distance-text">2.1 miles</span>
-            <span className="event-separator-text"> | </span>
-            <span className="event-time-text">8 mins</span>
-          </div>
-        </div>
-        
-        {/* Navigate Button */}
-        <button className="event-navigate-button">
-          <img 
-            src="/Icons/event_icons/navigate_icon.png" 
-            alt="Navigate" 
-            className="event-navigate-button-icon"
-          />
-          <span className="event-navigate-button-text">Navigate To</span>
-        </button>
+        <EventsNavigation 
+          coordinates={eventData.coordinates}
+          title={eventData.venue_name || eventData.title}
+        />
 
         {/* Horizontal Rule */}
         <div className="event-horizontal-rule" />

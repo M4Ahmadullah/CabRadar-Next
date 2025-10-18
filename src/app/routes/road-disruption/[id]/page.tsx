@@ -119,6 +119,8 @@ export default function RoadDisruptionPage({ params }: RoadDisruptionPageProps) 
             fromDate={disruptionData.fromDate}
             toDate={disruptionData.toDate}
             comments={disruptionData.comments}
+            roadName={disruptionData.roadName}
+            disruptionId={disruptionData.id}
           />
         </div>
       </div>

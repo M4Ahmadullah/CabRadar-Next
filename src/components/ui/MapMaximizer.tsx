@@ -11,7 +11,7 @@ interface MapMaximizerProps {
   isMaximized: boolean;
   onMinimize: () => void;
   coordinates: [number, number];
-  type: 'Serious' | 'Severe' | 'Closure' | 'Moderate' | 'tfl' | 'police-check' | 'clear';
+  type: 'Serious' | 'Severe' | 'Closure' | 'Moderate' | 'tfl' | 'police-check' | 'clear' | 'event' | 'transport-disruption';
   roadName?: string;
   roadType?: 'A' | 'M' | 'Street';
   roadNumber?: string;
@@ -59,6 +59,8 @@ export const MapMaximizer: React.FC<MapMaximizerProps> = ({
       case 'tfl': return '/Icons/inpectors_icons/police.png';
       case 'police-check': return '/Icons/inpectors_icons/alert.png';
       case 'clear': return '/Icons/inpectors_icons/white_like.png';
+      case 'event': return '/Icons/message_status_icons/moderate.png';
+      case 'transport-disruption': return '/Icons/message_status_icons/moderate.png';
       default: return '/Icons/message_status_icons/moderate.png';
     }
   };
@@ -140,6 +142,8 @@ export const MapMaximizer: React.FC<MapMaximizerProps> = ({
                   {type === 'tfl' ? 'TfL Stop Check' : 
                    type === 'police-check' ? 'Police Stop Check' : 
                    type === 'clear' ? 'Clear (No TfL / police)' :
+                   type === 'event' ? 'Event' :
+                   type === 'transport-disruption' ? 'Transport Disruption' :
                    type === 'Closure' ? 'Closure' : 
                    type === 'Moderate' ? 'Moderate Delays' : 
                    `${type} Delays`}

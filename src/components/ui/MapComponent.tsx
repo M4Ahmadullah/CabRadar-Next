@@ -118,7 +118,11 @@ export const MapComponent: React.FC<MapComponentProps> = ({
         
         // Add the actual PNG icon for inspector markers (no background)
         const iconImg = document.createElement('img');
-        iconImg.src = '/Icons/message_status_icons/inspector.png'; // Assuming this icon exists
+        // Use the correct icon based on inspector type
+        const iconPath = marker.data.type === 'tfl' ? '/Icons/inpectors_icons/police.png' :
+                        marker.data.type === 'police-check' ? '/Icons/inpectors_icons/alert.png' :
+                        '/Icons/inpectors_icons/white_like.png';
+        iconImg.src = iconPath;
         iconImg.style.width = '32px';
         iconImg.style.height = '32px';
         iconImg.style.objectFit = 'contain';
