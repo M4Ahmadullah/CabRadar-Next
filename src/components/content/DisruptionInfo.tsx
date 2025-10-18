@@ -1,3 +1,42 @@
+/**
+ * DisruptionInfo Component
+ * 
+ * This component displays comprehensive information about road disruptions, including:
+ * - Affected roads with share functionality
+ * - Current update details
+ * - Comments and last updated information
+ * - Reasons, dates, and other metadata
+ * 
+ * Features:
+ * - Dynamic road badge display (A roads, M roads, and streets)
+ * - Share button for affected roads section
+ * - Formatted date/time display using London timezone
+ * - Conditional rendering of sections based on data availability
+ * - Proper spacing and layout matching Android design
+ * 
+ * Data Sections:
+ * - Affected Roads: Shows road badges with share functionality
+ * - Current Update: Displays the latest disruption information
+ * - Comments: Shows additional comments about the disruption
+ * - Last Updated: Shows when the information was last updated
+ * - Reasons: Displays category and subcategory information
+ * - From/To: Shows disruption start and end dates
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.description - Current update description
+ * @param {string} props.lastUpdated - Last updated timestamp
+ * @param {Array} props.affectedRoads - Array of affected road objects
+ * @param {string} [props.category] - Disruption category
+ * @param {string} [props.subCategory] - Disruption subcategory
+ * @param {string} [props.fromDate] - Disruption start date
+ * @param {string} [props.toDate] - Disruption end date
+ * @param {string} [props.comments] - Additional comments
+ * @param {string} [props.roadName] - Road name for share functionality
+ * @param {string} [props.disruptionId] - Disruption ID for share functionality
+ * @param {string} [props.className] - Optional CSS class name
+ * @returns {JSX.Element} Comprehensive disruption information display
+ */
 // components/content/DisruptionInfo.tsx
 import { motion } from 'framer-motion';
 import { RoadBadge } from '@/components/ui/RoadBadge';
@@ -32,6 +71,13 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
   roadName,
   disruptionId
 }) => {
+  /**
+   * Formats a date string to London timezone
+   * Handles errors gracefully by returning the original string if parsing fails
+   * 
+   * @param {string} dateString - ISO date string to format
+   * @returns {string} Formatted date string in London timezone
+   */
   const formatDateTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -43,11 +89,12 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
 
   return (
     <div className={`disruption-info-component${className ? ` ${className}` : ''}`} style={{ marginLeft: '10px', marginRight: '15px' }}>
-      {/* Affected Roads Section */}
+      {/* Affected Roads Section with Share Functionality */}
       {affectedRoads && affectedRoads.length > 0 && (
         <div className="affected-roads-section">
           <div className="affected-roads-header">
             <div className="affected-roads-label ml-1">Affected Roads</div>
+            {/* Share Button - Only show if road name and disruption ID are available */}
             {roadName && disruptionId && (
               <ShareButton 
                 url={`/routes/road-disruption/${generateRoadDisruptionSlug(roadName, disruptionId)}`}
@@ -87,7 +134,7 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
         </div>
       )}
 
-      {/* Horizontal Rule */}
+      {/* Horizontal Rule Separator */}
       <div className="horizontal-rule" />
 
       {/* Current Update Section */}
@@ -117,7 +164,7 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
         </div>
       )}
 
-      {/* Horizontal Rule */}
+      {/* Horizontal Rule Separator */}
       <div className="horizontal-rule" />
 
       {/* Spacing */}
@@ -135,7 +182,7 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
         </div>
       )}
 
-      {/* From Section */}
+      {/* From Date Section */}
       {fromDate && (
         <div className="content-section">
           <div className="title-spacing" />
@@ -144,7 +191,7 @@ export const DisruptionInfo: React.FC<DisruptionInfoProps> = ({
         </div>
       )}
 
-      {/* To Section */}
+      {/* To Date Section */}
       {toDate && (
         <div className="content-section">
           <div className="title-spacing" />

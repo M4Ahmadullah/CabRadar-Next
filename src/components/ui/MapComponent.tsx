@@ -1,3 +1,41 @@
+/**
+ * MapComponent - Interactive Mapbox Map Component
+ * 
+ * This component provides an interactive map using Mapbox GL JS with the following features:
+ * - Custom map styling with Mapbox styles
+ * - Interactive markers for different content types
+ * - Maximize/minimize functionality
+ * - Custom marker icons and styling
+ * - Touch and mouse interaction support
+ * 
+ * Marker Types Supported:
+ * - Disruption markers (road disruptions)
+ * - Inspector markers (TfL/Police checkpoints)
+ * - Event markers (events and venues)
+ * - Transport disruption markers
+ * 
+ * Features:
+ * - Responsive design with mobile-optimized controls
+ * - Custom marker icons based on content type
+ * - Popup functionality for marker information
+ * - Maximize button for full-screen viewing
+ * - Proper coordinate handling (longitude, latitude)
+ * 
+ * Dependencies:
+ * - Mapbox GL JS for map rendering
+ * - Mapbox access token from environment variables
+ * - Custom CSS classes for styling
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {[number, number]} props.coordinates - Map center coordinates [longitude, latitude]
+ * @param {number} [props.zoom] - Initial zoom level (default: 14)
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {Array} [props.markers] - Array of marker objects to display
+ * @param {Function} [props.onMaximize] - Callback for maximize button click
+ * @param {boolean} [props.showMaximizeButton] - Whether to show maximize button
+ * @returns {JSX.Element} Interactive map component
+ */
 // components/ui/MapComponent.tsx
 'use client';
 

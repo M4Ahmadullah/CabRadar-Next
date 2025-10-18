@@ -1,3 +1,33 @@
+/**
+ * Inspector Page Component
+ * 
+ * This page displays detailed information about TfL Stop Checks and Police Checkpoints,
+ * providing users with real-time inspector status and interactive report updating.
+ * 
+ * Features:
+ * - Real-time inspector data display with live status
+ * - Interactive report update functionality
+ * - Map integration with inspector markers
+ * - Map maximizer for full-screen viewing
+ * - Time formatting (X mins ago, X hr ago, etc.)
+ * - Coordinate-based data fetching from URL parameters
+ * 
+ * Data Sources:
+ * - Inspector API with coordinate-based filtering
+ * - URL parameters for lat/lon coordinates
+ * - Real-time status updates through interactive buttons
+ * 
+ * Interactive Elements:
+ * - Update Report Container with dynamic buttons
+ * - Map with inspector markers and maximize functionality
+ * - Live icon display for active inspectors
+ * - Back/Close navigation buttons
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Promise<{id: string}>} props.params - Route parameters containing inspector ID
+ * @returns {JSX.Element} Complete inspector page with interactive features
+ */
 // app/(routes)/inspector/[id]/page.tsx
 'use client';
 
@@ -22,6 +52,7 @@ interface InspectorPageProps {
 }
 
 export default function InspectorPage({ params }: InspectorPageProps) {
+  // State management for inspector data and UI interactions
   const [inspectorData, setInspectorData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +61,10 @@ export default function InspectorPage({ params }: InspectorPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentReportType, setCurrentReportType] = useState<'tfl' | 'police-check' | 'clear'>('tfl');
 
+  /**
+   * Effect hook to fetch inspector data when component mounts
+   * Extracts coordinates from URL parameters for coordinate-based API calls
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,6 +90,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     fetchData();
   }, [params]);
 
+  // Loading state display
   if (loading) {
     return (
       <div className="mobile-container">
@@ -79,10 +115,18 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     );
   }
 
+  // Error state - redirect to 404 page
   if (error || !inspectorData) {
     notFound();
   }
 
+  /**
+   * Formats time difference to human-readable format
+   * Shows "X mins ago", "X hr ago", or "X hr Y mins ago"
+   * 
+   * @param {string} timeString - ISO timestamp string
+   * @returns {string} Formatted time ago string
+   */
   const formatTimeAgo = (timeString: string) => {
     const now = Date.now();
     const time = new Date(timeString).getTime();
@@ -101,6 +145,12 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     }
   };
 
+  /**
+   * Handles report update submission
+   * Simulates API call and updates local state with new report type
+   * 
+   * @param {string} reportType - Type of report to submit
+   */
   const submitUpdateReport = async (reportType: 'still-here' | 'clear' | 'tfl' | 'police-check') => {
     if (!inspectorData?.coordinates) return;
     
@@ -145,8 +195,10 @@ export default function InspectorPage({ params }: InspectorPageProps) {
     }
   };
 
+  // Check if inspector is currently live/active
   const isLiveInspector = isLive(new Date(inspectorData.time));
 
+  // Map markers for inspector location
   const mapMarkers = [
     {
       coordinates: inspectorData.coordinates,
@@ -162,6 +214,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
   return (
     <>
       <div className="inspector-container">
+        {/* Header with Back and Close buttons */}
         <div className="inspector-header" style={{ paddingTop: '50px' }}>
           <button 
             className="inspector-back-button"
@@ -178,12 +231,12 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         </div>
         
         <div className="inspector-content">
-        {/* Title Section */}
+        {/* Title Section - Inspector Location Name */}
         <div className="inspector-title-section">
           <div className="inspector-title">{inspectorData.locationName}</div>
         </div>
 
-        {/* Live Icon Section */}
+        {/* Live Icon Section - Shows if inspector is currently active */}
         <div className="inspector-live-icon-section" style={{ marginTop: '15px' }}>
           <div className="inspector-live-icon-row">
             <div className="inspector-live-icon-container">
@@ -201,7 +254,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
           </div>
         </div>
 
-        {/* Type Section */}
+        {/* Inspector Type Section - Shows current report type and time */}
         <div className="inspector-type-section" style={{ width: '95%', margin: '0 auto', marginBottom: '10px' }}>
           <div className="inspector-type-content ">
             <div className="inspector-type-icon-container">
@@ -222,7 +275,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
           </div>
         </div>
 
-        {/* Update Report Container */}
+        {/* Update Report Container - Interactive buttons for report updates */}
         <UpdateReportContainer
           currentReportType={currentReportType}
           onSubmitReport={submitUpdateReport}
@@ -230,7 +283,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
           isWithinBoundary={true}
         />
         
-        {/* Map */}
+        {/* Map Section - Interactive map with inspector marker */}
         <div className="map-container" style={{ margin: '0 auto', width: '100%' }}>
           <MapComponent 
             coordinates={inspectorData.coordinates}
@@ -245,6 +298,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         {/* Map Spacing */}
         <div className="map-spacing" />
         
+        {/* Inspector Information Section */}
         <InspectorInfo 
           originalMessage={inspectorData.originalMessage}
           formattedAddress={inspectorData.formattedAddress}
@@ -255,7 +309,7 @@ export default function InspectorPage({ params }: InspectorPageProps) {
         </div>
       </div>
 
-      {/* Map Maximizer - Rendered outside mobile container for full screen */}
+      {/* Map Maximizer - Full-screen map overlay */}
       <MapMaximizer
         isMaximized={isMapMaximized}
         onMinimize={() => setIsMapMaximized(false)}

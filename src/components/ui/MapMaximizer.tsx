@@ -1,3 +1,47 @@
+/**
+ * MapMaximizer - Full-Screen Map Overlay Component
+ * 
+ * This component provides a full-screen map overlay with floating content,
+ * designed to match the Android app's maximized map experience.
+ * 
+ * Features:
+ * - Full-screen map display with overlay content
+ * - Floating message header with content information
+ * - Minimize button to return to normal view
+ * - Dynamic content based on map type
+ * - Proper coordinate handling and marker display
+ * 
+ * Content Types Supported:
+ * - Road Disruptions: Shows severity, road name, and last updated
+ * - Inspectors: Shows type (TfL/Police), location, and time ago
+ * - Events: Shows event type, venue name, and timing
+ * - Transport Disruptions: Shows disruption type and location
+ * 
+ * Features:
+ * - Responsive design with mobile-optimized layout
+ * - Custom severity icons based on content type
+ * - Time formatting (X mins ago, X hr ago, etc.)
+ * - Proper marker handling for different content types
+ * - Smooth transitions and animations
+ * 
+ * Dependencies:
+ * - MapComponent for map rendering
+ * - Custom CSS classes for styling
+ * - Icon assets for severity indicators
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} props.isMaximized - Whether the map is currently maximized
+ * @param {Function} props.onMinimize - Callback to minimize the map
+ * @param {[number, number]} props.coordinates - Map center coordinates
+ * @param {string} props.type - Content type for styling and icons
+ * @param {string} [props.roadName] - Road name for road disruptions
+ * @param {string} [props.locationName] - Location name for other content types
+ * @param {string} [props.lastUpdated] - Last updated timestamp
+ * @param {string} [props.timeAgo] - Formatted time ago string
+ * @param {Array} [props.markers] - Array of marker objects to display
+ * @returns {JSX.Element} Full-screen map overlay component
+ */
 // components/ui/MapMaximizer.tsx
 'use client';
 

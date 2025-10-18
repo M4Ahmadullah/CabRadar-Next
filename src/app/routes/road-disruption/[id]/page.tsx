@@ -1,3 +1,36 @@
+/**
+ * Road Disruption Page Component
+ * 
+ * This page displays comprehensive information about road disruptions, including:
+ * - Road disruption details with affected roads
+ * - Interactive map with disruption markers
+ * - Share functionality for affected roads
+ * - Map maximizer for full-screen viewing
+ * - Live status indicators
+ * 
+ * Features:
+ * - Real-time road disruption data display
+ * - Affected roads section with road badges
+ * - Share button for disruption links
+ * - Interactive map integration
+ * - Comprehensive disruption information (current update, comments, dates, etc.)
+ * 
+ * Data Sources:
+ * - Road Disruption API with slug-based routing
+ * - Coordinate-based map markers
+ * - Real-time status updates
+ * 
+ * Interactive Elements:
+ * - Map with disruption markers and maximize functionality
+ * - Share button in affected roads section
+ * - Back/Close navigation buttons
+ * - Live icon display for active disruptions
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Promise<{id: string}>} props.params - Route parameters containing disruption slug
+ * @returns {JSX.Element} Complete road disruption page with interactive features
+ */
 // app/(routes)/road-disruption/[id]/page.tsx
 'use client';
 

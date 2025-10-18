@@ -1,3 +1,36 @@
+/**
+ * Transport Disruption Page Component
+ * 
+ * This page displays information about transport disruptions (bus, tube, etc.), including:
+ * - Transport disruption details and status
+ * - Interactive map with disruption markers
+ * - Real-time route calculation and navigation
+ * - Map maximizer for full-screen viewing
+ * - Live status indicators
+ * 
+ * Features:
+ * - Real-time transport disruption data display
+ * - Route calculation with distance and duration
+ * - Navigation integration with Google Maps
+ * - Interactive map integration
+ * - Live icon display for active disruptions
+ * 
+ * Data Sources:
+ * - Transport Disruption API with coordinate-based filtering
+ * - URL parameters for lat/lon coordinates
+ * - Mapbox Directions API for route calculation
+ * 
+ * Interactive Elements:
+ * - Map with disruption markers and maximize functionality
+ * - Navigation button with route calculation
+ * - Back/Close navigation buttons
+ * - Live icon display for active disruptions
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Promise<{id: string}>} props.params - Route parameters containing disruption ID
+ * @returns {JSX.Element} Complete transport disruption page with interactive features
+ */
 // app/(routes)/transport-disruption/[id]/page.tsx
 'use client';
 

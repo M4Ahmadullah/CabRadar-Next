@@ -1,3 +1,38 @@
+/**
+ * Event Page Component
+ * 
+ * This page displays comprehensive information about events, including:
+ * - Event details with venue information
+ * - Interactive map with event markers
+ * - Real-time route calculation and navigation
+ * - Map maximizer for full-screen viewing
+ * - Event attendance and timing information
+ * 
+ * Features:
+ * - Real-time event data display
+ * - Event icon mapping from emojis to PNG files
+ * - Route calculation with distance and duration
+ * - Navigation integration with Google Maps
+ * - Major event badges and attendance display
+ * - Event timing and address information
+ * 
+ * Data Sources:
+ * - Event API with coordinate-based filtering
+ * - URL parameters for lat/lon coordinates
+ * - Mapbox Directions API for route calculation
+ * - Event icon mapping system
+ * 
+ * Interactive Elements:
+ * - Map with event markers and maximize functionality
+ * - Navigation button with route calculation
+ * - Back/Close navigation buttons
+ * - Event icon display with category mapping
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Promise<{id: string}>} props.params - Route parameters containing event ID
+ * @returns {JSX.Element} Complete event page with interactive features
+ */
 // app/(routes)/event/[id]/page.tsx
 'use client';
 
